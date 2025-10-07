@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр контроллеров - AControl</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>AControl</h2>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li><a href="status.html">Состояние</a></li>
+                <li class="active"><a href="controller_list.html">Просмотр контроллеров</a></li>
+                <li><a href="#">Управление контроллерами</a></li>
+                <li><a href="#">Управление конфигурацией</a></li>
+                <li><a href="admin.html">Панель администратора</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <h1 class="page-title">Просмотр контроллеров</h1>
+
+        <div class="widgets-grid">
+            <div class="widget" style="grid-column: 1 / -1;">
+                <div class="widget-header">
+                    <span>Общий список контроллеров</span>
+                    <a href="#" class="more-link">Обновить</a>
+                </div>
+                <div class="widget-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Номер</th>
+                                <th>Роль</th>
+                                <th>Дата выдачи доступа</th>
+                                <th>Серийный номер контроллера</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center">
+                            <tr>
+                                <td>435-691-066</td>
+                                <td>инженер</td>
+                                <td>10.10.2025</td>
+                                <td>100-199-024</td>
+                                <td><span class="status-active">✅ В работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-067</td>
+                                <td>администратор</td>
+                                <td>15.10.2025</td>
+                                <td>100-199-025</td>
+                                <td><span class="status-inactive">❌ Не в работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-068</td>
+                                <td>оператор</td>
+                                <td>20.10.2025</td>
+                                <td>100-199-026</td>
+                                <td><span class="status-active">✅ В работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-069</td>
+                                <td>инженер</td>
+                                <td>25.10.2025</td>
+                                <td>100-199-027</td>
+                                <td><span class="status-inactive">❌ Не в работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-070</td>
+                                <td>администратор</td>
+                                <td>30.10.2025</td>
+                                <td>100-199-028</td>
+                                <td><span class="status-active">✅ В работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-071</td>
+                                <td>оператор</td>
+                                <td>05.11.2025</td>
+                                <td>100-199-029</td>
+                                <td><span class="status-active">✅ В работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-072</td>
+                                <td>инженер</td>
+                                <td>10.11.2025</td>
+                                <td>100-199-030</td>
+                                <td><span class="status-inactive">❌ Не в работе</span></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-073</td>
+                                <td>администратор</td>
+                                <td>15.11.2025</td>
+                                <td>100-199-031</td>
+                                <td><span class="status-active">✅ В работе</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <style>
+        .status-active {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .widget {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+
+    <script>
+        // Анимация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Анимация появления элементов
+            const elements = document.querySelectorAll('.widget');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    element.style.transition = 'all 0.5s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Добавляем обработчики для строк таблицы
+            document.querySelectorAll('.table tr').forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                    this.style.transition = 'background-color 0.3s ease';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Обработчики для пунктов меню
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Если это не ссылка на admin.html, предотвращаем переход
+                    if (!this.getAttribute('href') || this.getAttribute('href') === '#') {
+                        e.preventDefault();
+
+                        // Убираем активный класс у всех пунктов
+                        document.querySelectorAll('.menu li').forEach(item => {
+                            item.classList.remove('active');
+                        });
+
+                        // Добавляем активный класс к текущему пункту
+                        this.parentElement.classList.add('active');
+                    }
+                });
+            });
+
+            // Анимация для виджетов при наведении
+            document.querySelectorAll('.widget').forEach(widget => {
+                widget.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                widget.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
