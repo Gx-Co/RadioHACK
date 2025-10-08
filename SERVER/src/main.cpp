@@ -2,12 +2,45 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string>
+#include <openssl/evp.h>
+#include <iomanip>
+#include <sstream>
 #include "database.h"
 
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "libssl.lib")
+#pragma comment(lib, "libcrypto.lib")
 
 const int PORT = 8080;
 const int BUFFER_SIZE = 1024;
+
+// Функция для хеширования пароля
+std::string hashPassword(const std::string& password) {
+    EVP_MD_CTX* context = EVP_MD_CTX_new();
+    const EVP_MD* md = EVP_sha256();
+    unsigned char hash[EVP_MAX_MD_SIZE];
+    unsigned int hash_len;
+
+    // Инициализация контекста хеширования
+    EVP_DigestInit_ex(context, md, nullptr);
+
+    // Добавление данных (пароля) в контекст хеширования
+    EVP_DigestUpdate(context, password.c_str(), password.length());
+
+    // Завершение хеширования и получение результата
+    EVP_DigestFinal_ex(context, hash, &hash_len);
+
+    // Освобождение контекста
+    EVP_MD_CTX_free(context);
+
+    // Преобразование бинарного хеша в шестнадцатеричную строку
+    std::stringstream ss;
+    for (unsigned int i = 0; i < hash_len; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+
+    return ss.str();
+}
 
 int main() {
     setlocale(LC_ALL, "Russian");
@@ -108,17 +141,20 @@ int main() {
     }
     password[bytes_received] = '\0';
 
-    // Преобразуем в std::string для передачи в функции базы данных
+    // Преобразуем в std::string и хешируем пароль
     std::string login_str(login);
     std::string password_str(password);
+    std::string hashed_password = hashPassword(password_str);
 
-    // Проверка учетных данных
-    if (SUDB(login_str, password_str)) {
+    std::cout << "Получен пароль, хеш: " << hashed_password << std::endl;
+
+    // Проверка учетных данных (работаем с хешами)
+    if (SUDB(login_str, hashed_password)) {
         authenticated = true;
         std::cout << "Пользователь " << login_str << " успешно авторизован" << std::endl;
 
         // Если это администратор с дефолтным паролем - требуем смену
-        if (login_str == "admin" && password_str == "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8") {
+        if (login_str == "admin" && hashed_password == "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8") {
             std::cout << "Обнаружен пароль по умолчанию. Требуется смена пароля." << std::endl;
 
             const char* msg = "Требуется смена пароля администратора. Введите новый пароль:";
@@ -151,10 +187,14 @@ int main() {
             }
             new_pass2[bytes_received] = '\0';
 
-            // Сравниваем пароли
-            if (strcmp(new_pass1, new_pass2) == 0) {
-                // Меняем пароль
-                CDDB("admin", std::string(new_pass1), "", "");
+            // Хешируем новые пароли и сравниваем
+            std::string hashed_new_pass1 = hashPassword(std::string(new_pass1));
+            std::string hashed_new_pass2 = hashPassword(std::string(new_pass2));
+
+            // Сравниваем хеши паролей
+            if (hashed_new_pass1 == hashed_new_pass2) {
+                // Меняем пароль (сохраняем хеш)
+                CDDB("admin", hashed_new_pass1, "", "");
                 const char* success_msg = "Пароль успешно изменен!";
                 send(client_socket, success_msg, strlen(success_msg), 0);
                 std::cout << "Пароль администратора успешно изменен" << std::endl;
@@ -222,8 +262,8 @@ int main() {
         std::cout << "Клиент: " << buffer << std::endl;
 
         std::string response;
-        if (strcmp(buffer, "привет") == 0) {
-            response = "Здравствуйте!";
+        if (strcmp(buffer, "Hello") == 0) {
+            response = "Hi!";
         }
         else if (strcmp(buffer, "time") == 0) {
             // вернуть текущее время
