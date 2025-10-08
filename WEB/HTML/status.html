@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Состояние системы - AControl</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>AControl</h2>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li class="active"><a href="status.html">Состояние</a></li>
+                <li><a href="controller_list.html">Просмотр контроллеров</a></li>
+                <li><a href="#">Управление контроллерами</a></li>
+                <li><a href="#">Управление конфигурацией</a></li>
+                <li><a href="admin.html">Панель администратора</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <h1 class="page-title">Состояние системы</h1>
+
+        <div class="widgets-grid">
+            <div class="widget" style="grid-column: 1 / -1;">
+                <div class="widget-header">
+                    <span>Статус контроллеров</span>
+                    <a href="#" class="more-link">Обновить</a>
+                </div>
+                <div class="widget-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Номер</th>
+                                <th>Состояние</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center">
+                            <tr>
+                                <td>435-691-066</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-067</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-068</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-069</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-070</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-071</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-072</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                            <tr>
+                                <td>435-691-073</td>
+                                <td><button class="view-btn">Просмотреть</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <style>
+        .view-btn {
+            background: transparent;
+            border: 2px solid #27ae60;
+            color: #27ae60;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            min-width: 120px;
+        }
+        
+        .view-btn:hover {
+            background: #27ae60;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .view-btn:active {
+            transform: translateY(0);
+        }
+        
+        .widget {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+
+    <script>
+        // Анимация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Анимация появления элементов
+            const elements = document.querySelectorAll('.widget');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    element.style.transition = 'all 0.5s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Добавляем обработчики для строк таблицы
+            document.querySelectorAll('.table tr').forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                    this.style.transition = 'background-color 0.3s ease';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Обработчики для кнопок просмотра
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const number = row.cells[0].textContent;
+                    alert(`Просмотр состояния для контроллера: ${number}\nЗдесь будет детальная информация о состоянии системы`);
+                });
+            });
+
+            // Обработчики для пунктов меню
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Если это не внешняя ссылка, предотвращаем переход и обрабатываем активное состояние
+                    if (!this.getAttribute('href') || this.getAttribute('href') === '#') {
+                        e.preventDefault();
+
+                        // Убираем активный класс у всех пунктов
+                        document.querySelectorAll('.menu li').forEach(item => {
+                            item.classList.remove('active');
+                        });
+
+                        // Добавляем активный класс к текущему пункту
+                        this.parentElement.classList.add('active');
+                    }
+                    // Для ссылок на другие страницы тоже обновляем активное состояние
+                    else {
+                        // Убираем активный класс у всех пунктов
+                        document.querySelectorAll('.menu li').forEach(item => {
+                            item.classList.remove('active');
+                        });
+
+                        // Добавляем активный класс к текущему пункту
+                        this.parentElement.classList.add('active');
+                    }
+                });
+            });
+
+            // Анимация для виджетов при наведении
+            document.querySelectorAll('.widget').forEach(widget => {
+                widget.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                widget.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
